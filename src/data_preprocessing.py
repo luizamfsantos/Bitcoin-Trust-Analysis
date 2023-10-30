@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import sys, os
 
 def signed_data(data):
     '''
@@ -44,3 +45,12 @@ def transform_data(data):
 def prepare_data(data):
     # Function to prepare data for modeling
     pass
+
+
+if __name__ == '__main__':
+    # append the path of the project directory to the system path
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    file_path = "data/raw/soc-sign-bitcoinotc.csv"
+    lines = 1000
+    data = pd.read_csv(file_path, nrows=lines,header=0)
+    signed_data = signed_data(data)
