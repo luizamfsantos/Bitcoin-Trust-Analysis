@@ -51,6 +51,8 @@ if __name__ == '__main__':
     # append the path of the project directory to the system path
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
     file_path = "data/raw/soc-sign-bitcoinotc.csv"
-    lines = 1000
-    data = pd.read_csv(file_path, nrows=lines,header=0)
+    # lines = 1000
+    # data = pd.read_csv(file_path, nrows=lines,header=0)
+    data = pd.read_csv(file_path, header=0)
     signed_data = signed_data(data)
+    signed_data.to_csv("data/processed/soc-sign-bitcoinotc-signed.csv", index=False)
