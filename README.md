@@ -39,7 +39,8 @@ The repository is organized as follows:
 
 - **data**: Contains the raw data files used for the analysis.
 - **notebooks**: Jupyter notebooks detailing the data preprocessing, analysis, and visualization steps.
-- **results**: Output files, visualizations, and any other relevant results obtained from the analysis.
+- **images**: Output files, visualizations, and any other relevant results obtained from the analysis.
+- **src**: Python scripts, reused in the notebook files.
 
 ## Requirements
 
