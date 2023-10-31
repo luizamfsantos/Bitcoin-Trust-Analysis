@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import sys, os
 from datetime import datetime
+import networkx as nx
 
 def signed_data(data):
     '''
@@ -106,6 +107,33 @@ def divide_data_into_periods(data,num_periods):
     data['PERIOD'] = pd.cut(data['TIME'], bins=num_periods, labels=False)
     data = data.drop('TIME', axis=1)
     return data
+
+def create_direct_network(data):
+    '''
+    Create weighted DiGraph from data
+
+    Parameter
+    ---------
+    data: pandas DataFrame
+        It should contain the columns FROM_NODE,TO_NODE and TRUST_INDEX
+        The TRUST_INDEX will correspond to the weight of each node
+    
+    Returns
+    -------
+    network_data: Weighted DiGraph
+        The network created from data
+    
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> data = pd.DataFrame({'FROM_NODE': np.array([1, 2, 3, 4]), 'TO_NODE': np.array([2, 3, 4, 1]), 'TRUST_INDEX': np.array([1, -1, 1, -1])})
+    >>> network_data = create_direct_network(data)
+    >>> network_data.edges(data=True)
+    OutEdgeDataView([(1, 2, {'weight': 1}), (2, 3, {'weight': -1}), (3, 4, {'weight': 1}), (4, 1, {'weight': -1})])
+    '''
+    network_data = nx.from_pandas_edgelist(data, 'FROM_NODE', 'TO_NODE', edge_attr='TRUST_INDEX', create_using=nx.DiGraph())
+    return network_data
 
 
 def clean_data(data):
