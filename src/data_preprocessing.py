@@ -164,18 +164,6 @@ def create_direct_network(data):
     return network_data
 
 
-def clean_data(data):
-    # Function to clean the raw data
-    pass
-
-def transform_data(data):
-    # Function to transform data for analysis
-    pass
-
-def prepare_data(data):
-    # Function to prepare data for modeling
-    pass
-
 
 if __name__ == '__main__':
     # append the path of the project directory to the system path
