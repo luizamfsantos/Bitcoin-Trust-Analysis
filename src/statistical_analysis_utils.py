@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from data_preprocessing import epoch_to_datetime
 import sys, os
 
 def calculate_time_statistics(data):
@@ -50,6 +49,7 @@ def conduct_hypothesis_test(data):
     pass
 
 if __name__ == '__main__':
+    from data_preprocessing import epoch_to_datetime
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
     file_path = "data/processed/soc-sign-bitcoinotc-signed.csv"
     # lines = 100
