@@ -70,6 +70,44 @@ def epoch_to_datetime(data):
     data = data.drop('TIME_SINCE_EPOCH', axis=1)
     return data
 
+def divide_data_into_periods(data,num_periods):
+    '''
+    Divides the input DataFrame into num_periods equally spaced periods based on time intervals.
+
+    Parameters
+    ----------
+    data: pandas DataFrame
+        The data to be modified
+        It should have a column called TIME
+    num_periods: int
+        The number of periods to divide the data into
+    
+    Returns
+    -------
+    data: pandas DataFrame
+        The modified data
+        Instead of the column TIME,
+            there is a column called PERIOD
+    
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> from datetime import datetime
+    >>> data = pd.DataFrame({'TIME': np.array([datetime(2019,1,1), datetime(2019,1,2), datetime(2019,1,3), datetime(2019,1,4)])})
+    >>> data_timed = divide_data_into_periods(data,2)
+    >>> data_timed
+       PERIOD
+    0       0
+    1       0
+    2       1
+    3       1
+    '''
+    data['PERIOD'] = pd.cut(data['TIME'], bins=num_periods, labels=False)
+    data = data.drop('TIME', axis=1)
+    return data
+
+
 def clean_data(data):
     # Function to clean the raw data
     pass
