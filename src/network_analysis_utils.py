@@ -89,14 +89,79 @@ def calculate_network_summary_statistics(network_data):
     return network_stats
 
 
-def visualize_network(network_data):
-    # Function to visualize the network
-    pass
+def create_negative_nodes_subgraph(graph, negative_node_list):
+    '''
+    Create a subgraph of negative nodes
+    
+    Parameters
+    ----------
+    graph: Weighted DiGraph
+        The network to be analyzed
+    negative_node_list: numpy array
+        The nodes that have negative TRUST_INDEX values
+        
+    Returns
+    -------
+    negative_nodes_graph: Weighted DiGraph
+        The subgraph of negative nodes
+    
+    Examples
+    --------
+    >>> import networkx as nx
+    >>> import matplotlib.pyplot as plt
+    >>> network_data = nx.DiGraph()
+    >>> network_data.add_edge(1, 2, weight=0.5)
+    >>> network_data.add_edge(1, 3, weight=-9.8)
+    >>> network_data.add_edge(2, 3, weight=-0.5)
+    >>> network_data.add_edge(3, 1, weight=0.5)
+    >>> negative_nodes = np.array([2, 1])
+    >>> negative_nodes_graph = create_negative_nodes_subgraph(network_data, negative_nodes)
+    >>> negative_nodes_graph.edges(data=True)
+    OutEdgeDataView([(1, 3, {'weight': -9.8}), (2, 3, {'weight': -0.5})])
+    '''
+    # Create a subgraph of negative nodes, include only edges that have a node from negative_node_list in either TO_NODE or FROM_NODE
+    negative_nodes_graph = nx.DiGraph()
+    for node in negative_node_list:
+        negative_nodes_graph.add_node(node)
+    for edge in graph.edges():
+        if edge[0] in negative_node_list or edge[1] in negative_node_list:
+            negative_nodes_graph.add_edge(edge[0], edge[1])
 
-def calculate_centrality(network_data):
-    # Function to calculate centrality measures
-    pass
 
-def community_detection(network_data):
-    # Function to detect communities within the network
-    pass
+
+def visualize_network_of_negative_nodes(negative_nodes_graph, negative_node_list):
+    '''
+    Visualize communities of negative nodes in the network
+
+    Parameters
+    ----------
+    negative_nodes_graph: Weighted DiGraph
+        The network to be analyzed
+    negative_node_list: numpy array
+
+    Returns
+    -------
+    None
+
+    Prints
+    ------
+    Graph:
+        Shows the communities of negative nodes in the network
+        Color negative_node_list nodes red and the rest of the nodes blue
+    
+    Examples
+    --------
+    >>> import networkx as nx
+    >>> import matplotlib.pyplot as plt
+    >>> data = pd.DataFrame({'FROM_NODE': np.array([1, 2, 3, 4]), 'TO_NODE': np.array([2, 3, 4, 1]), 'TRUST_INDEX': np.array([1, -1, 1, -1])})
+    >>> network_data = create_direct_network(data)
+    >>> negative_nodes = select_negative_nodes(data)
+    >>> visualize_network_of_negative_nodes(network_data, negative_nodes)
+    '''
+    
+    # Visualize the subgraph
+    pos = nx.spring_layout(negative_nodes_graph)
+    nx.draw_networkx_nodes(negative_nodes_graph, pos, cmap=plt.get_cmap('jet'), node_size=500)
+    nx.draw_networkx_edges(negative_nodes_graph, pos, edgelist=negative_nodes_graph.edges(), edge_color='black')
+    nx.draw_networkx_nodes(negative_nodes_graph, pos, nodelist=negative_node_list, node_color='r', node_size=500)
+    plt.show()
