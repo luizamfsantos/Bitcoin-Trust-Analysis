@@ -108,6 +108,34 @@ def divide_data_into_periods(data,num_periods):
     data = data.drop('TIME', axis=1)
     return data
 
+def select_negative_nodes(data):
+    '''
+    This function selects the TO_NODEs that have negative TRUST_INDEX values
+
+    Parameters
+    ----------
+    data: pandas DataFrame
+        The data to be modified
+        It should have columns FROM_NODE,TO_NODE and TRUST_INDEX
+    
+    Returns
+    -------
+    negative_nodes: numpy array
+        The nodes that have negative TRUST_INDEX values
+    
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> data = pd.DataFrame({'FROM_NODE': np.array([1, 2, 3, 4]), 'TO_NODE': np.array([2, 3, 4, 1]), 'TRUST_INDEX': np.array([1, -1, 1, -1])})
+    >>> negative_nodes = select_negative_nodes(data)
+    >>> negative_nodes
+    array([2, 1])
+    '''
+    data_negative = data[data['TRUST_INDEX'] < 0]
+    negative_nodes = data_negative['TO_NODE'].unique()
+    return negative_nodes
+
 def create_direct_network(data):
     '''
     Create weighted DiGraph from data
