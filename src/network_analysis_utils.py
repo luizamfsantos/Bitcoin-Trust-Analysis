@@ -68,24 +68,40 @@ def calculate_network_summary_statistics(network_data):
     print("Calculating clustering coefficient...")
     network_stats['clustering_coefficient'] = nx.average_clustering(network_data)
     print("Clustering coefficient: ", network_stats['clustering_coefficient'])
-    print("Calculating modularity...")
-    network_stats['modularity'] = nx.algorithms.community.modularity(network_data, nx.algorithms.community.label_propagation_communities(network_data))
-    print("Modularity: ", network_stats['modularity'])
-    print("Calculating connected components...")
-    network_stats['connected_components'] = nx.number_connected_components(network_data)
-    print("Number of connected components: ", network_stats['connected_components'])
+    # check if the network is undirected
+    if nx.is_directed(network_data) is False:
+        print("Calculating modularity...")
+        network_stats['modularity'] = nx.algorithms.community.modularity(network_data, nx.algorithms.community.label_propagation_communities(network_data))
+        print("Modularity: ", network_stats['modularity'])
+        print("Calculating connected components...")
+        network_stats['connected_components'] = nx.number_connected_components(network_data)
+        print("Number of connected components: ", network_stats['connected_components'])
+    else:
+        network_stats['modularity'] = None
+        network_stats['connected_components'] = None
     print("Calculating edge density...")
     network_stats['edge_density'] = nx.density(network_data)
     print("Edge density: ", network_stats['edge_density'])
     print("Calculating diameter...")
-    network_stats['diameter'] = nx.diameter(network_data)
+    try:
+        network_stats['diameter'] = nx.diameter(network_data)
+    except nx.exception.NetworkXError:
+        network_stats['diameter'] = None
     print("Diameter: ", network_stats['diameter'])
     print("Calculating average shortest path length...")
-    network_stats['average_shortest_path_length'] = nx.average_shortest_path_length(network_data)
+    if network_stats['diameter'] == None:
+        network_stats['average_shortest_path_length'] = None
+    else:
+        network_stats['average_shortest_path_length'] = nx.average_shortest_path_length(network_data)
     print("Average shortest path length: ", network_stats['average_shortest_path_length'])
     print("Calculating degree distribution...")
     degrees = [network_data.degree(n) for n in network_data.nodes()]
-    plt.hist(degrees)
+    bins = list(range(0, 101, 10))  # defining bins from 0 to 100 with step 10
+    plt.hist(degrees, bins=bins)
+    plt.xticks(bins)  # setting x-axis ticks to the bin edges
+    plt.xlabel('Degree')
+    plt.ylabel('Frequency')
+    plt.title('Degree Distribution')
     plt.show()
     return network_stats
 
