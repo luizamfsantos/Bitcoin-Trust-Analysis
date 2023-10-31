@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 def calculate_network_summary_statistics(network_data):
     '''
@@ -213,3 +214,110 @@ def calculate_centralities_negative_nodes(graph, negative_nodes_list):
     for key in centralities.keys():
         negative_nodes_centralities[key] = {k: centralities[key][k] for k in negative_nodes_list}
     return negative_nodes_centralities
+
+def calculate_mean_centrality_negative_nodes(negative_nodes_centralities):
+    '''
+    Calculate the mean centrality for each centrality measure in negative_nodes_centralities
+
+    Parameters
+    ----------
+    negative_nodes_centralities: dict
+        A dictionary containing the centrality measures for each node in negative_nodes_list
+            degree_centrality: degree centrality of each node in negative_nodes_list
+            betweenness_centrality: betweenness centrality of each node in negative_nodes_list
+            eigenvector_centrality: eigenvector centrality of each node in negative_nodes_list
+    
+    Returns
+    -------
+    mean_centrality: dict
+        A dictionary containing the mean centrality for each centrality measure in negative_nodes_centralities
+    
+    Examples
+    --------
+    >>> import networkx as nx
+    >>> import matplotlib.pyplot as plt
+    >>> network_data = nx.DiGraph()
+    >>> network_data.add_edge(1, 2, weight=0.5)
+    >>> network_data.add_edge(1, 3, weight=-9.8)
+    >>> network_data.add_edge(2, 3, weight=-0.5)
+    >>> network_data.add_edge(3, 1, weight=0.5)
+    >>> negative_nodes = np.array([2, 1])
+    >>> centralities = calculate_centralities_negative_nodes(network_data, negative_nodes)
+    >>> mean_centrality = calculate_mean_centrality_negative_nodes(centralities)
+    >>> mean_centrality['degree_centrality']
+    0.3333333333333333
+    >>> mean_centrality['betweenness_centrality']
+    0.0
+    >>> mean_centrality['eigenvector_centrality']
+    0.5773502691896256
+    '''
+    mean_centrality = {}
+    for key in negative_nodes_centralities.keys():
+        mean_centrality[key] = np.mean(list(negative_nodes_centralities[key].values()))
+    return mean_centrality
+
+def time_series_centralities(*centrality_dicts):
+    '''
+    Create 3 subplots to represent the centrality measures calculated from calculate_mean_centrality_negative_nodes and plot them over time
+        Make sure each graph is in order starting with period 0 until period n
+    
+    Parameters
+    ----------
+    *centrality_dicts: dict
+        A dictionary containing the centrality measures for each node in negative_nodes_list
+            degree_centrality: degree centrality of each node in negative_nodes_list
+            betweenness_centrality: betweenness centrality of each node in negative_nodes_list
+            eigenvector_centrality: eigenvector centrality of each node in negative_nodes_list
+            
+    Returns
+    -------
+    None
+
+    Prints
+    ------
+    Graph:
+        Shows the time series of the centrality measures for each period
+    
+    Examples
+    --------
+    >>> import networkx as nx
+    >>> import matplotlib.pyplot as plt
+    >>> network_data_period_0 = nx.DiGraph()
+    >>> network_data_period_0.add_edge(1, 2, weight=0.5)
+    >>> network_data_period_0.add_edge(1, 3, weight=-9.8)
+    >>> network_data_period_0.add_edge(2, 3, weight=-0.5)
+    >>> network_data_period_0.add_edge(3, 1, weight=0.5)
+    >>> negative_nodes_period_0 = np.array([2, 1])
+    >>> centralities_period_0 = calculate_centralities_negative_nodes(network_data_period_0, negative_nodes_period_0)
+    >>> mean_centrality_period_0 = calculate_mean_centrality_negative_nodes(centralities_period_0)
+    >>> network_data_period_1 = nx.DiGraph()
+    >>> network_data_period_1.add_edge(1, 2, weight=0.5)
+    >>> network_data_period_1.add_edge(1, 3, weight=-9.8)
+    >>> network_data_period_1.add_edge(2, 3, weight=-0.5)
+    >>> network_data_period_1.add_edge(3, 1, weight=0.5)
+    >>> negative_nodes_period_1 = np.array([2, 1])
+    >>> centralities_period_1 = calculate_centralities_negative_nodes(network_data_period_1, negative_nodes_period_1)
+    >>> mean_centrality_period_1 = calculate_mean_centrality_negative_nodes(centralities_period_1)
+    >>> time_series_centralities(mean_centrality_period_0, mean_centrality_period_1)
+    '''
+    num_periods = len(centrality_dicts)
+    # Create a figure with 3 subplots
+    fig, axs = plt.subplots(3)
+    # Plot the degree centrality time series
+    for i in range(num_periods):
+        axs[0].plot(list(centrality_dicts[i]['degree_centrality'].values()), label='Period ' + str(i))
+    axs[0].set_title('Degree Centrality')
+    axs[0].legend()
+    # Plot the betweenness centrality time series
+    for i in range(num_periods):
+        axs[1].plot(list(centrality_dicts[i]['betweenness_centrality'].values()), label='Period ' + str(i))
+    axs[1].set_title('Betweenness Centrality')
+    axs[1].legend()
+    # Plot the eigenvector centrality time series
+    for i in range(num_periods):
+        axs[2].plot(list(centrality_dicts[i]['eigenvector_centrality'].values()), label='Period ' + str(i))
+    axs[2].set_title('Eigenvector Centrality')
+    axs[2].legend()
+    # Show the figure
+    plt.show()
+
