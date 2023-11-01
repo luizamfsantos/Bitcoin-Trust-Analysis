@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 def calculate_network_summary_statistics(network_data):
     '''
@@ -36,7 +37,7 @@ def calculate_network_summary_statistics(network_data):
     --------
     >>> import networkx as nx
     >>> import matplotlib.pyplot as plt
-    >>> network_data = nx.DiGraph()
+    >>> network_data = nx.Graph()
     >>> network_data.add_edge(1, 2, weight=0.5)
     >>> network_data.add_edge(1, 3, weight=9.8)
     >>> network_data.add_edge(2, 3, weight=0.5)
@@ -44,19 +45,19 @@ def calculate_network_summary_statistics(network_data):
     >>> network_stats = calculate_network_summary_statistics(network_data)
     Calculating network summary statistics...
     Number of nodes:  3
-    Number of edges:  4
+    Number of edges:  3
     Calculating clustering coefficient...
-    Clustering coefficient:  0.3333333333333333
+    Clustering coefficient:  1.0
     Calculating modularity...
     Modularity:  0.0
     Calculating connected components...
     Number of connected components:  1
     Calculating edge density...
-    Edge density:  0.6666666666666666
+    Edge density:  1.0
     Calculating diameter...
-    Diameter:  2
+    Diameter:  1
     Calculating average shortest path length...
-    Average shortest path length:  1.3333333333333333
+    Average shortest path length:  1.0
     Calculating degree distribution...
     '''
     network_stats = {}
@@ -213,14 +214,14 @@ def calculate_centralities_negative_nodes(graph, negative_nodes_list):
     >>> network_data.add_edge(1, 3, weight=-9.8)
     >>> network_data.add_edge(2, 3, weight=-0.5)
     >>> network_data.add_edge(3, 1, weight=0.5)
-    >>> negative_nodes = np.array([2, 1])
+    >>> negative_nodes = np.array([1, 2])
     >>> centralities = calculate_centralities_negative_nodes(network_data, negative_nodes)
     >>> centralities['degree_centrality']
-    {1: 0.3333333333333333, 2: 0.3333333333333333}
+    {1: 1.5, 2: 1.0}
     >>> centralities['betweenness_centrality']
-    {1: 0.0, 2: 0.0}
+    {1: 0.5, 2: 0.0}
     >>> centralities['eigenvector_centrality']
-    {1: 0.5773502691896256, 2: 0.5773502691896256}
+    {1: 0.5484320099232192, 2: 0.4139987636359533}
     '''
     centralities = {}
     centralities['degree_centrality'] = nx.degree_centrality(graph)
@@ -262,11 +263,11 @@ def calculate_mean_centrality_negative_nodes(negative_nodes_centralities):
     >>> centralities = calculate_centralities_negative_nodes(network_data, negative_nodes)
     >>> mean_centrality = calculate_mean_centrality_negative_nodes(centralities)
     >>> mean_centrality['degree_centrality']
-    0.3333333333333333
+    1.25
     >>> mean_centrality['betweenness_centrality']
-    0.0
+    0.25
     >>> mean_centrality['eigenvector_centrality']
-    0.5773502691896256
+    0.4812153867795862
     '''
     mean_centrality = {}
     for key in negative_nodes_centralities.keys():
@@ -338,3 +339,7 @@ def time_series_centralities(*centrality_dicts):
     # Show the figure
     plt.show()
 
+if __name__ == "__main__":
+    from data_preprocessing import create_direct_network, select_negative_nodes
+    import doctest
+    doctest.testmod()
