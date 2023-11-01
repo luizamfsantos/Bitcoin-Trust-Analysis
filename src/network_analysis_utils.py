@@ -137,13 +137,15 @@ def create_negative_nodes_subgraph(graph, negative_node_list):
     >>> negative_nodes_graph.edges(data=True)
     OutEdgeDataView([(1, 3, {'weight': -9.8}), (2, 3, {'weight': -0.5})])
     '''
-    # Create a subgraph of negative nodes, include only edges that have a node from negative_node_list in either TO_NODE or FROM_NODE
     negative_nodes_graph = nx.DiGraph()
     for node in negative_node_list:
         negative_nodes_graph.add_node(node)
     for edge in graph.edges():
         if edge[0] in negative_node_list or edge[1] in negative_node_list:
+            negative_nodes_graph.add_node(edge[0])  # Ensure the nodes are in the subgraph
+            negative_nodes_graph.add_node(edge[1])
             negative_nodes_graph.add_edge(edge[0], edge[1])
+    return negative_nodes_graph
 
 
 
