@@ -175,7 +175,8 @@ def visualize_network_of_negative_nodes(negative_nodes_graph, negative_node_list
     >>> negative_nodes = select_negative_nodes(data)
     >>> visualize_network_of_negative_nodes(network_data, negative_nodes)
     '''
-    
+    # Create list of nodes that are in negative_node_list and in negative_nodes_graph
+    negative_node_list = [node for node in negative_node_list if node in negative_nodes_graph.nodes]
     # Visualize the subgraph
     pos = nx.spring_layout(negative_nodes_graph)
     nx.draw_networkx_nodes(negative_nodes_graph, pos, cmap=plt.get_cmap('jet'), node_size=500)
