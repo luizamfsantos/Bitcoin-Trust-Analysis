@@ -179,10 +179,12 @@ def visualize_network_of_negative_nodes(negative_nodes_graph, negative_node_list
     # Create list of nodes that are in negative_node_list and in negative_nodes_graph
     negative_node_list = [node for node in negative_node_list if node in negative_nodes_graph.nodes]
     # Visualize the subgraph
+    plt.figure(figsize=(10, 10))
     pos = nx.spring_layout(negative_nodes_graph)
     nx.draw_networkx_nodes(negative_nodes_graph, pos, cmap=plt.get_cmap('jet'), node_size=500)
     nx.draw_networkx_edges(negative_nodes_graph, pos, edgelist=negative_nodes_graph.edges(), edge_color='black')
     nx.draw_networkx_nodes(negative_nodes_graph, pos, nodelist=negative_node_list, node_color='r', node_size=500)
+    plt.title('Network of Negative Nodes')
     plt.show()
 
 def calculate_centralities_negative_nodes(graph, negative_nodes_list):
@@ -319,24 +321,31 @@ def time_series_centralities(*centrality_dicts):
     >>> time_series_centralities(mean_centrality_period_0, mean_centrality_period_1)
     '''
     num_periods = len(centrality_dicts)
-    # Create a figure with 3 subplots
-    fig, axs = plt.subplots(3)
-    # Plot the degree centrality time series
+    # Create x axis: Period 0, Period 1, ..., Period n
+    x = np.arange(num_periods)
+    # Create 3 dataframes for each centrality measure
+    degree_centrality = pd.DataFrame(columns=['Period', 'Degree Centrality'])
+    betweenness_centrality = pd.DataFrame(columns=['Period', 'Betweenness Centrality'])
+    eigenvector_centrality = pd.DataFrame(columns=['Period', 'Eigenvector Centrality'])
     for i in range(num_periods):
-        axs[0].plot(list(centrality_dicts[i]['degree_centrality'].values()), label='Period ' + str(i))
+        degree_centrality.loc[i] = [i, centrality_dicts[i]['degree_centrality']]
+        betweenness_centrality.loc[i] = [i, centrality_dicts[i]['betweenness_centrality']]
+        eigenvector_centrality.loc[i] = [i, centrality_dicts[i]['eigenvector_centrality']]
+    # Create 3 subplots for each centrality measure
+    fig, axs = plt.subplots(3, figsize=(10, 10))
+    fig.suptitle('Time Series of Centrality Measures')
+    axs[0].plot(x, degree_centrality['Degree Centrality'])
     axs[0].set_title('Degree Centrality')
-    axs[0].legend()
-    # Plot the betweenness centrality time series
-    for i in range(num_periods):
-        axs[1].plot(list(centrality_dicts[i]['betweenness_centrality'].values()), label='Period ' + str(i))
+    axs[0].set_xlabel('Period')
+    axs[0].set_ylabel('Degree Centrality')
+    axs[1].plot(x, betweenness_centrality['Betweenness Centrality'])
     axs[1].set_title('Betweenness Centrality')
-    axs[1].legend()
-    # Plot the eigenvector centrality time series
-    for i in range(num_periods):
-        axs[2].plot(list(centrality_dicts[i]['eigenvector_centrality'].values()), label='Period ' + str(i))
+    axs[1].set_xlabel('Period')
+    axs[1].set_ylabel('Betweenness Centrality')
+    axs[2].plot(x, eigenvector_centrality['Eigenvector Centrality'])
     axs[2].set_title('Eigenvector Centrality')
-    axs[2].legend()
-    # Show the figure
+    axs[2].set_xlabel('Period')
+    axs[2].set_ylabel('Eigenvector Centrality')
     plt.show()
 
 if __name__ == "__main__":
