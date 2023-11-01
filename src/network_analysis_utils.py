@@ -346,6 +346,7 @@ def time_series_centralities(*centrality_dicts):
     axs[2].set_title('Eigenvector Centrality')
     axs[2].set_xlabel('Period')
     axs[2].set_ylabel('Eigenvector Centrality')
+    plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
